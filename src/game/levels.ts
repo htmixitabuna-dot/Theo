@@ -11,7 +11,7 @@ export interface Platform {
   y: number;
   w: number;
   h: number;
-  type?: 'ground' | 'wood' | 'moving' | 'spring' | 'stone' | 'cloud' | 'rooftop' | 'candy' | 'crystal' | 'toy' | 'ice' | 'web';
+  type?: 'ground' | 'wood' | 'moving' | 'spring' | 'stone' | 'cloud' | 'rooftop' | 'candy' | 'crystal' | 'toy' | 'ice' | 'web' | 'shell';
   moveRange?: number;
   moveSpeed?: number;
   direction?: 'horizontal' | 'vertical';
@@ -42,7 +42,7 @@ export interface CoinItem {
 
 export interface Enemy {
   id: number;
-  type: 'mushroom' | 'bat';
+  type: 'mushroom' | 'bat' | 'crab' | 'bee' | 'snowman' | 'robot' | 'boss';
   x: number;
   y: number;
   w: number;
@@ -60,7 +60,7 @@ export interface RewardItem {
   y: number;
   w: number;
   h: number;
-  type: 'star' | 'chest' | 'shield' | 'superHeart' | 'armor' | 'moto';
+  type: 'star' | 'chest' | 'shield' | 'superHeart' | 'armor' | 'moto' | 'doubleJump' | 'magnet' | 'rocket';
   collected: boolean;
   opened?: boolean;
 }
@@ -97,11 +97,12 @@ export interface LevelData {
   id: number;
   name: string;
   subtitle: string;
-  theme: 'parque' | 'cidade' | 'castelo' | 'masmorra' | 'doces' | 'cristais' | 'nuvens' | 'brinquedos' | 'neve' | 'caverna';
+  theme: 'parque' | 'cidade' | 'castelo' | 'masmorra' | 'doces' | 'cristais' | 'nuvens' | 'brinquedos' | 'neve' | 'caverna' | 'praia' | 'floresta' | 'espaco';
   mission?: 1 | 2;
   rescueTarget?: 'amor' | 'carinho';
   hasWebPower?: boolean;
   isSkateMode?: boolean;
+  requireHeartsToUnlockGoal?: number;
   webAnchors?: WebAnchor[];
   worldWidth: number;
   worldHeight: number;
@@ -2050,6 +2051,424 @@ export const LEVELS: LevelData[] = [
       { type: 'lamppost', x: 11200, y: 520 },
       { type: 'building', x: 12100, y: 520 },
       { type: 'lamppost', x: 12900, y: 520 },
+    ],
+  },
+  // ==========================================
+  // 5 FASES NOVAS ESPECIAIS (Indices 13..17)
+  // ==========================================
+  {
+    id: 14,
+    name: 'Fase 6: Praia',
+    subtitle: 'Pule nas conchinhas, jogue a teia e pegue o Escudo de Coração!',
+    theme: 'praia',
+    hasWebPower: true,
+    webAnchors: [
+      { id: 1401, x: 2525, y: 180, label: 'Argola de Teia' },
+      { id: 1402, x: 5375, y: 180, label: 'Argola de Teia' },
+      { id: 1403, x: 8125, y: 180, label: 'Argola de Teia' },
+    ],
+    worldWidth: 10500,
+    worldHeight: 580,
+    playerStart: { x: 80, y: 420 },
+    goal: { x: 10050, y: 380, w: 140, h: 140, label: 'Portal da Praia' },
+    checkpoints: [
+      { x: 3400, y: 420, reached: false },
+      { x: 6800, y: 420, reached: false },
+    ],
+    platforms: [
+      { x: 0, y: 520, w: 2400, h: 60, type: 'ground' },
+      { x: 480, y: 430, w: 120, h: 24, type: 'shell' },
+      { x: 880, y: 350, w: 180, h: 24, type: 'wood' },
+      { x: 1350, y: 430, w: 120, h: 24, type: 'shell' },
+      { x: 1800, y: 320, w: 180, h: 24, type: 'wood' },
+
+      { x: 2650, y: 520, w: 2600, h: 60, type: 'ground' },
+      { x: 3150, y: 430, w: 120, h: 24, type: 'shell' },
+      { x: 3650, y: 330, w: 190, h: 24, type: 'wood' },
+      { x: 4250, y: 430, w: 120, h: 24, type: 'shell' },
+      { x: 4750, y: 340, w: 180, h: 24, type: 'wood' },
+
+      { x: 5500, y: 520, w: 2500, h: 60, type: 'ground' },
+      { x: 6050, y: 430, w: 120, h: 24, type: 'shell' },
+      { x: 6550, y: 320, w: 190, h: 24, type: 'wood' },
+      { x: 7150, y: 430, w: 120, h: 24, type: 'shell' },
+
+      { x: 8250, y: 520, w: 2250, h: 60, type: 'ground' },
+      { x: 8800, y: 430, w: 120, h: 24, type: 'shell' },
+      { x: 9300, y: 340, w: 180, h: 24, type: 'wood' },
+    ],
+    hazards: [
+      { x: 1100, y: 492, w: 64, h: 28, type: 'puddle' },
+      { x: 3950, y: 492, w: 64, h: 28, type: 'puddle' },
+      { x: 6850, y: 492, w: 64, h: 28, type: 'puddle' },
+    ],
+    enemies: [
+      { id: 1401, type: 'crab', x: 700, y: 480, w: 46, h: 40, vx: 1.6, minX: 550, maxX: 950, alive: true },
+      { id: 1402, type: 'crab', x: 1600, y: 480, w: 46, h: 40, vx: -1.7, minX: 1450, maxX: 1950, alive: true },
+      { id: 1403, type: 'crab', x: 3400, y: 480, w: 46, h: 40, vx: 1.7, minX: 3250, maxX: 3750, alive: true },
+      { id: 1404, type: 'crab', x: 4550, y: 480, w: 46, h: 40, vx: -1.8, minX: 4350, maxX: 4950, alive: true },
+      { id: 1405, type: 'crab', x: 6300, y: 480, w: 46, h: 40, vx: 1.8, minX: 6150, maxX: 6650, alive: true },
+      { id: 1406, type: 'crab', x: 7500, y: 480, w: 46, h: 40, vx: -1.8, minX: 7300, maxX: 7850, alive: true },
+      { id: 1407, type: 'crab', x: 9050, y: 480, w: 46, h: 40, vx: 1.8, minX: 8900, maxX: 9500, alive: true },
+    ],
+    rewards: [
+      { id: 1401, x: 940, y: 305, w: 32, h: 32, type: 'shield', collected: false },
+      { id: 1402, x: 3720, y: 285, w: 32, h: 32, type: 'shield', collected: false },
+      { id: 1403, x: 6620, y: 275, w: 32, h: 32, type: 'shield', collected: false },
+      { id: 1404, x: 9360, y: 295, w: 32, h: 32, type: 'superHeart', collected: false },
+    ],
+    hearts: [
+      { id: 1401, x: 520, y: 350, collected: false },
+      { id: 1402, x: 960, y: 300, collected: false },
+      { id: 1403, x: 1390, y: 350, collected: false },
+      { id: 1404, x: 1880, y: 270, collected: false },
+      { id: 1405, x: 3200, y: 350, collected: false },
+      { id: 1406, x: 3740, y: 280, collected: false },
+      { id: 1407, x: 4300, y: 350, collected: false },
+      { id: 1408, x: 4830, y: 290, collected: false },
+      { id: 1409, x: 6100, y: 350, collected: false },
+      { id: 1410, x: 6640, y: 270, collected: false },
+      { id: 1411, x: 7200, y: 350, collected: false },
+      { id: 1412, x: 8850, y: 350, collected: false },
+      { id: 1413, x: 9380, y: 290, collected: false },
+    ],
+    sceneryElements: [
+      { type: 'tree', x: 250, y: 520 },
+      { type: 'tree', x: 1200, y: 520 },
+      { type: 'tree', x: 2900, y: 520 },
+      { type: 'tree', x: 4100, y: 520 },
+      { type: 'tree', x: 5800, y: 520 },
+      { type: 'tree', x: 7000, y: 520 },
+      { type: 'tree', x: 8600, y: 520 },
+    ],
+  },
+  {
+    id: 15,
+    name: 'Fase 7: Floresta',
+    subtitle: 'Siga os vagalumes, jogue a teia e use o Pulo Duplo!',
+    theme: 'floresta',
+    hasWebPower: true,
+    webAnchors: [
+      { id: 1501, x: 2485, y: 180, label: 'Argola de Teia' },
+      { id: 1502, x: 5360, y: 180, label: 'Argola de Teia' },
+      { id: 1503, x: 8140, y: 180, label: 'Argola de Teia' },
+    ],
+    worldWidth: 10500,
+    worldHeight: 580,
+    playerStart: { x: 80, y: 420 },
+    goal: { x: 10050, y: 380, w: 140, h: 140, label: 'Portal da Floresta' },
+    checkpoints: [
+      { x: 3400, y: 420, reached: false },
+      { x: 6800, y: 420, reached: false },
+    ],
+    platforms: [
+      { x: 0, y: 520, w: 2350, h: 60, type: 'ground' },
+      { x: 460, y: 400, w: 170, h: 24, type: 'wood' },
+      { x: 880, y: 290, w: 180, h: 24, type: 'wood' },
+      { x: 1350, y: 380, w: 170, h: 24, type: 'wood' },
+      { x: 1820, y: 270, w: 180, h: 24, type: 'wood' },
+
+      { x: 2620, y: 520, w: 2600, h: 60, type: 'ground' },
+      { x: 3150, y: 390, w: 180, h: 24, type: 'wood' },
+      { x: 3680, y: 270, w: 180, h: 24, type: 'wood' },
+      { x: 4250, y: 370, w: 180, h: 24, type: 'wood' },
+      { x: 4750, y: 260, w: 180, h: 24, type: 'wood' },
+
+      { x: 5500, y: 520, w: 2500, h: 60, type: 'ground' },
+      { x: 6050, y: 390, w: 180, h: 24, type: 'wood' },
+      { x: 6580, y: 270, w: 180, h: 24, type: 'wood' },
+      { x: 7150, y: 370, w: 180, h: 24, type: 'wood' },
+
+      { x: 8280, y: 520, w: 2220, h: 60, type: 'ground' },
+      { x: 8850, y: 390, w: 180, h: 24, type: 'wood' },
+      { x: 9380, y: 280, w: 180, h: 24, type: 'wood' },
+    ],
+    hazards: [
+      { x: 1120, y: 492, w: 60, h: 28, type: 'slime' },
+      { x: 3980, y: 492, w: 60, h: 28, type: 'slime' },
+      { x: 6880, y: 492, w: 60, h: 28, type: 'slime' },
+    ],
+    enemies: [
+      { id: 1501, type: 'bee', x: 720, y: 340, w: 44, h: 36, vx: 1.8, minX: 550, maxX: 1000, alive: true },
+      { id: 1502, type: 'bee', x: 1620, y: 310, w: 44, h: 36, vx: -1.9, minX: 1400, maxX: 1950, alive: true },
+      { id: 1503, type: 'bee', x: 3420, y: 330, w: 44, h: 36, vx: 1.9, minX: 3200, maxX: 3800, alive: true },
+      { id: 1504, type: 'bee', x: 4520, y: 300, w: 44, h: 36, vx: -2.0, minX: 4300, maxX: 4900, alive: true },
+      { id: 1505, type: 'bee', x: 6320, y: 320, w: 44, h: 36, vx: 2.0, minX: 6100, maxX: 6700, alive: true },
+      { id: 1506, type: 'bee', x: 7450, y: 310, w: 44, h: 36, vx: -2.0, minX: 7200, maxX: 7800, alive: true },
+      { id: 1507, type: 'bee', x: 9120, y: 320, w: 44, h: 36, vx: 2.0, minX: 8900, maxX: 9500, alive: true },
+    ],
+    rewards: [
+      { id: 1501, x: 520, y: 355, w: 32, h: 32, type: 'doubleJump', collected: false },
+      { id: 1502, x: 3220, y: 345, w: 32, h: 32, type: 'doubleJump', collected: false },
+      { id: 1503, x: 6120, y: 345, w: 32, h: 32, type: 'doubleJump', collected: false },
+      { id: 1504, x: 9440, y: 235, w: 32, h: 32, type: 'superHeart', collected: false },
+    ],
+    hearts: [
+      { id: 1501, x: 540, y: 350, collected: false },
+      { id: 1502, x: 960, y: 240, collected: false },
+      { id: 1503, x: 1430, y: 330, collected: false },
+      { id: 1504, x: 1900, y: 220, collected: false },
+      { id: 1505, x: 3240, y: 340, collected: false },
+      { id: 1506, x: 3760, y: 220, collected: false },
+      { id: 1507, x: 4330, y: 320, collected: false },
+      { id: 1508, x: 4830, y: 210, collected: false },
+      { id: 1509, x: 6140, y: 340, collected: false },
+      { id: 1510, x: 6660, y: 220, collected: false },
+      { id: 1511, x: 7230, y: 320, collected: false },
+      { id: 1512, x: 8930, y: 340, collected: false },
+      { id: 1513, x: 9460, y: 230, collected: false },
+    ],
+    sceneryElements: [
+      { type: 'tree', x: 250, y: 520 },
+      { type: 'tree', x: 750, y: 520 },
+      { type: 'tree', x: 1300, y: 520 },
+      { type: 'tree', x: 2900, y: 520 },
+      { type: 'tree', x: 3600, y: 520 },
+      { type: 'tree', x: 4400, y: 520 },
+      { type: 'tree', x: 5800, y: 520 },
+      { type: 'tree', x: 6600, y: 520 },
+      { type: 'tree', x: 7400, y: 520 },
+      { type: 'tree', x: 8600, y: 520 },
+    ],
+  },
+  {
+    id: 16,
+    name: 'Fase 8: Neve',
+    subtitle: 'Escorregue no gelo, jogue a teia e use o Ímã de Corações!',
+    theme: 'neve',
+    hasWebPower: true,
+    webAnchors: [
+      { id: 1601, x: 2525, y: 180, label: 'Argola de Teia' },
+      { id: 1602, x: 5375, y: 180, label: 'Argola de Teia' },
+      { id: 1603, x: 8125, y: 180, label: 'Argola de Teia' },
+    ],
+    worldWidth: 10500,
+    worldHeight: 580,
+    playerStart: { x: 80, y: 420 },
+    goal: { x: 10050, y: 380, w: 140, h: 140, label: 'Portal da Neve' },
+    checkpoints: [
+      { x: 3400, y: 420, reached: false },
+      { x: 6800, y: 420, reached: false },
+    ],
+    platforms: [
+      { x: 0, y: 520, w: 2400, h: 60, type: 'ice' },
+      { x: 500, y: 400, w: 200, h: 24, type: 'ice' },
+      { x: 950, y: 300, w: 200, h: 24, type: 'ice' },
+      { x: 1450, y: 390, w: 200, h: 24, type: 'ice' },
+
+      { x: 2650, y: 520, w: 2600, h: 60, type: 'ice' },
+      { x: 3200, y: 390, w: 200, h: 24, type: 'ice' },
+      { x: 3750, y: 290, w: 200, h: 24, type: 'ice' },
+      { x: 4350, y: 380, w: 200, h: 24, type: 'ice' },
+
+      { x: 5500, y: 520, w: 2500, h: 60, type: 'ice' },
+      { x: 6100, y: 390, w: 200, h: 24, type: 'ice' },
+      { x: 6650, y: 290, w: 200, h: 24, type: 'ice' },
+      { x: 7250, y: 380, w: 200, h: 24, type: 'ice' },
+
+      { x: 8250, y: 520, w: 2250, h: 60, type: 'ice' },
+      { x: 8850, y: 390, w: 200, h: 24, type: 'ice' },
+      { x: 9400, y: 300, w: 200, h: 24, type: 'ice' },
+    ],
+    hazards: [
+      { x: 1200, y: 492, w: 60, h: 28, type: 'cone' },
+      { x: 4050, y: 492, w: 60, h: 28, type: 'cone' },
+      { x: 6950, y: 492, w: 60, h: 28, type: 'cone' },
+    ],
+    enemies: [
+      { id: 1601, type: 'snowman', x: 750, y: 468, w: 46, h: 52, vx: 1.5, minX: 550, maxX: 1050, alive: true },
+      { id: 1602, type: 'snowman', x: 1750, y: 468, w: 46, h: 52, vx: -1.6, minX: 1500, maxX: 2100, alive: true },
+      { id: 1603, type: 'snowman', x: 3450, y: 468, w: 46, h: 52, vx: 1.6, minX: 3250, maxX: 3850, alive: true },
+      { id: 1604, type: 'snowman', x: 4650, y: 468, w: 46, h: 52, vx: -1.7, minX: 4400, maxX: 5000, alive: true },
+      { id: 1605, type: 'snowman', x: 6350, y: 468, w: 46, h: 52, vx: 1.7, minX: 6150, maxX: 6750, alive: true },
+      { id: 1606, type: 'snowman', x: 7550, y: 468, w: 46, h: 52, vx: -1.7, minX: 7300, maxX: 7850, alive: true },
+      { id: 1607, type: 'snowman', x: 9150, y: 468, w: 46, h: 52, vx: 1.7, minX: 8900, maxX: 9500, alive: true },
+    ],
+    rewards: [
+      { id: 1601, x: 580, y: 355, w: 32, h: 32, type: 'magnet', collected: false },
+      { id: 1602, x: 3280, y: 345, w: 32, h: 32, type: 'magnet', collected: false },
+      { id: 1603, x: 6180, y: 345, w: 32, h: 32, type: 'magnet', collected: false },
+      { id: 1604, x: 9480, y: 255, w: 32, h: 32, type: 'superHeart', collected: false },
+    ],
+    hearts: [
+      { id: 1601, x: 600, y: 350, collected: false },
+      { id: 1602, x: 1050, y: 250, collected: false },
+      { id: 1603, x: 1550, y: 340, collected: false },
+      { id: 1604, x: 3300, y: 340, collected: false },
+      { id: 1605, x: 3850, y: 240, collected: false },
+      { id: 1606, x: 4450, y: 330, collected: false },
+      { id: 1607, x: 6200, y: 340, collected: false },
+      { id: 1608, x: 6750, y: 240, collected: false },
+      { id: 1609, x: 7350, y: 330, collected: false },
+      { id: 1610, x: 8950, y: 340, collected: false },
+      { id: 1611, x: 9500, y: 250, collected: false },
+    ],
+    sceneryElements: [
+      { type: 'snowTree', x: 250, y: 440 },
+      { type: 'snowTree', x: 1100, y: 440 },
+      { type: 'snowTree', x: 2900, y: 440 },
+      { type: 'snowTree', x: 4100, y: 440 },
+      { type: 'snowTree', x: 5800, y: 440 },
+      { type: 'snowTree', x: 7000, y: 440 },
+      { type: 'snowTree', x: 8600, y: 440 },
+    ],
+  },
+  {
+    id: 17,
+    name: 'Fase 9: Espaço',
+    subtitle: 'Voe de foguete, jogue a teia e pegue a Estrela Invencível!',
+    theme: 'espaco',
+    hasWebPower: true,
+    webAnchors: [
+      { id: 1701, x: 2500, y: 180, label: 'Argola de Teia' },
+      { id: 1702, x: 5375, y: 180, label: 'Argola de Teia' },
+      { id: 1703, x: 8125, y: 180, label: 'Argola de Teia' },
+    ],
+    worldWidth: 10500,
+    worldHeight: 580,
+    playerStart: { x: 80, y: 420 },
+    goal: { x: 10050, y: 380, w: 140, h: 140, label: 'Portal Espacial' },
+    checkpoints: [
+      { x: 3400, y: 420, reached: false },
+      { x: 6800, y: 420, reached: false },
+    ],
+    platforms: [
+      { x: 0, y: 520, w: 2350, h: 60, type: 'stone' },
+      { x: 480, y: 390, w: 180, h: 24, type: 'cloud' },
+      { x: 950, y: 280, w: 180, h: 24, type: 'cloud' },
+      { x: 1450, y: 370, w: 180, h: 24, type: 'cloud' },
+
+      { x: 2650, y: 520, w: 2600, h: 60, type: 'stone' },
+      { x: 3200, y: 380, w: 180, h: 24, type: 'cloud' },
+      { x: 3750, y: 270, w: 180, h: 24, type: 'cloud' },
+      { x: 4350, y: 360, w: 180, h: 24, type: 'cloud' },
+
+      { x: 5500, y: 520, w: 2500, h: 60, type: 'stone' },
+      { x: 6100, y: 380, w: 180, h: 24, type: 'cloud' },
+      { x: 6650, y: 270, w: 180, h: 24, type: 'cloud' },
+      { x: 7250, y: 360, w: 180, h: 24, type: 'cloud' },
+
+      { x: 8250, y: 520, w: 2250, h: 60, type: 'stone' },
+      { x: 8850, y: 380, w: 180, h: 24, type: 'cloud' },
+      { x: 9400, y: 280, w: 180, h: 24, type: 'cloud' },
+    ],
+    hazards: [
+      { x: 1180, y: 492, w: 60, h: 28, type: 'spark' },
+      { x: 4050, y: 492, w: 60, h: 28, type: 'spark' },
+      { x: 6950, y: 492, w: 60, h: 28, type: 'spark' },
+    ],
+    enemies: [
+      { id: 1701, type: 'robot', x: 720, y: 472, w: 46, h: 48, vx: 1.8, minX: 550, maxX: 1050, alive: true },
+      { id: 1702, type: 'robot', x: 1750, y: 472, w: 46, h: 48, vx: -1.9, minX: 1500, maxX: 2100, alive: true },
+      { id: 1703, type: 'robot', x: 3450, y: 472, w: 46, h: 48, vx: 1.9, minX: 3250, maxX: 3850, alive: true },
+      { id: 1704, type: 'robot', x: 4650, y: 472, w: 46, h: 48, vx: -2.0, minX: 4400, maxX: 5000, alive: true },
+      { id: 1705, type: 'robot', x: 6350, y: 472, w: 46, h: 48, vx: 2.0, minX: 6150, maxX: 6750, alive: true },
+      { id: 1706, type: 'robot', x: 7550, y: 472, w: 46, h: 48, vx: -2.0, minX: 7300, maxX: 7850, alive: true },
+      { id: 1707, type: 'robot', x: 9150, y: 472, w: 46, h: 48, vx: 2.0, minX: 8900, maxX: 9500, alive: true },
+    ],
+    rewards: [
+      { id: 1701, x: 350, y: 475, w: 40, h: 36, type: 'rocket', collected: false },
+      { id: 1702, x: 1020, y: 235, w: 32, h: 32, type: 'star', collected: false },
+      { id: 1703, x: 3260, y: 335, w: 40, h: 36, type: 'rocket', collected: false },
+      { id: 1704, x: 6720, y: 225, w: 32, h: 32, type: 'star', collected: false },
+    ],
+    hearts: [
+      { id: 1701, x: 560, y: 340, collected: false },
+      { id: 1702, x: 1040, y: 230, collected: false },
+      { id: 1703, x: 1540, y: 320, collected: false },
+      { id: 1704, x: 3280, y: 330, collected: false },
+      { id: 1705, x: 3840, y: 220, collected: false },
+      { id: 1706, x: 4440, y: 310, collected: false },
+      { id: 1707, x: 6180, y: 330, collected: false },
+      { id: 1708, x: 6740, y: 220, collected: false },
+      { id: 1709, x: 7340, y: 310, collected: false },
+      { id: 1710, x: 8940, y: 330, collected: false },
+      { id: 1711, x: 9480, y: 230, collected: false },
+    ],
+    sceneryElements: [],
+  },
+  {
+    id: 18,
+    name: 'Fase 10: Castelo Final',
+    subtitle: 'Pegue 10 corações, derrote o Chefão e liberte o Ursinho Amor!',
+    theme: 'castelo',
+    rescueTarget: 'amor',
+    hasWebPower: true,
+    webAnchors: [
+      { id: 1801, x: 2625, y: 180, label: 'Argola de Teia' },
+      { id: 1802, x: 5575, y: 180, label: 'Argola de Teia' },
+      { id: 1803, x: 8425, y: 180, label: 'Argola de Teia' },
+    ],
+    requireHeartsToUnlockGoal: 10,
+    worldWidth: 11200,
+    worldHeight: 580,
+    playerStart: { x: 80, y: 420 },
+    goal: { x: 10750, y: 380, w: 140, h: 140, label: 'Trono do Amor' },
+    checkpoints: [
+      { x: 3500, y: 420, reached: false },
+      { x: 7000, y: 420, reached: false },
+    ],
+    platforms: [
+      { x: 0, y: 520, w: 2500, h: 60, type: 'stone' },
+      { x: 500, y: 400, w: 180, h: 24, type: 'stone' },
+      { x: 950, y: 300, w: 180, h: 24, type: 'stone' },
+      { x: 1450, y: 380, w: 180, h: 24, type: 'stone' },
+
+      { x: 2750, y: 520, w: 2700, h: 60, type: 'stone' },
+      { x: 3300, y: 390, w: 180, h: 24, type: 'stone' },
+      { x: 3850, y: 290, w: 180, h: 24, type: 'stone' },
+      { x: 4450, y: 380, w: 180, h: 24, type: 'stone' },
+
+      { x: 5700, y: 520, w: 2600, h: 60, type: 'stone' },
+      { x: 6300, y: 390, w: 180, h: 24, type: 'stone' },
+      { x: 6850, y: 290, w: 180, h: 24, type: 'stone' },
+      { x: 7450, y: 380, w: 180, h: 24, type: 'stone' },
+
+      { x: 8550, y: 520, w: 2650, h: 60, type: 'stone' },
+      { x: 9150, y: 390, w: 180, h: 24, type: 'stone' },
+      { x: 9700, y: 310, w: 180, h: 24, type: 'stone' },
+    ],
+    hazards: [
+      { x: 1200, y: 492, w: 60, h: 28, type: 'spark' },
+      { x: 4150, y: 492, w: 60, h: 28, type: 'spark' },
+      { x: 7150, y: 492, w: 60, h: 28, type: 'spark' },
+    ],
+    enemies: [
+      { id: 1801, type: 'mushroom', x: 750, y: 476, w: 44, h: 44, vx: 1.7, minX: 550, maxX: 1050, alive: true },
+      { id: 1802, type: 'mushroom', x: 3550, y: 476, w: 44, h: 44, vx: 1.8, minX: 3350, maxX: 3950, alive: true },
+      { id: 1803, type: 'mushroom', x: 6550, y: 476, w: 44, h: 44, vx: 1.8, minX: 6350, maxX: 6950, alive: true },
+      // Chefão que prendeu o Ursinho Amor!
+      { id: 1899, type: 'boss', x: 10350, y: 430, w: 86, h: 90, vx: 2.0, minX: 10050, maxX: 10620, alive: true },
+    ],
+    rewards: [
+      { id: 1801, x: 1020, y: 255, w: 32, h: 32, type: 'shield', collected: false },
+      { id: 1802, x: 3920, y: 245, w: 32, h: 32, type: 'armor', collected: false },
+      { id: 1803, x: 6920, y: 245, w: 32, h: 32, type: 'star', collected: false },
+      { id: 1804, x: 9760, y: 265, w: 32, h: 32, type: 'superHeart', collected: false },
+    ],
+    hearts: [
+      { id: 1801, x: 580, y: 350, collected: false },
+      { id: 1802, x: 1040, y: 250, collected: false },
+      { id: 1803, x: 1540, y: 330, collected: false },
+      { id: 1804, x: 3380, y: 340, collected: false },
+      { id: 1805, x: 3940, y: 240, collected: false },
+      { id: 1806, x: 4540, y: 330, collected: false },
+      { id: 1807, x: 6380, y: 340, collected: false },
+      { id: 1808, x: 6940, y: 240, collected: false },
+      { id: 1809, x: 7540, y: 330, collected: false },
+      { id: 1810, x: 9240, y: 340, collected: false },
+      { id: 1811, x: 9780, y: 260, collected: false },
+      { id: 1812, x: 10150, y: 460, collected: false },
+    ],
+    sceneryElements: [
+      { type: 'pillar', x: 300, y: 520 },
+      { type: 'torch', x: 700, y: 420 },
+      { type: 'pillar', x: 3000, y: 520 },
+      { type: 'torch', x: 3600, y: 420 },
+      { type: 'pillar', x: 6000, y: 520 },
+      { type: 'torch', x: 6600, y: 420 },
+      { type: 'pillar', x: 8900, y: 520 },
+      { type: 'torch', x: 9500, y: 420 },
     ],
   },
 ];

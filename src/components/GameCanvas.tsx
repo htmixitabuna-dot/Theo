@@ -960,7 +960,7 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
               const isNowBelowOrTouching = p.y + p.h >= plt.y - 4 && p.y + p.h <= plt.y + maxStep;
 
               if (wasAbove && isNowBelowOrTouching && p.vy >= 0) {
-                if (plt.type === 'spring') {
+                if (plt.type === 'spring' || plt.type === 'shell') {
                   p.y = plt.y - p.h;
                   p.vy = -19.5;
                   if (p.facing === 'right' && p.vx < 2.5) p.vx = 3;
@@ -1250,7 +1250,11 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
 
           // 14. Goal Detection
           const goal = level.goal;
+          const collectedHeartsNow = level.hearts.filter((h) => h.collected).length;
+          const hasEnoughHearts =
+            !level.requireHeartsToUnlockGoal || collectedHeartsNow >= level.requireHeartsToUnlockGoal;
           const reachedGoal =
+            hasEnoughHearts &&
             p.x + p.w > goal.x - 40 &&
             p.x < goal.x + goal.w + 40 &&
             p.y + p.h > goal.y &&

@@ -12,7 +12,7 @@ interface StartScreenProps {
 }
 
 export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
-  const [selectedMission, setSelectedMission] = useState<1 | 2 | 3 | 4>(1);
+  const [selectedMission, setSelectedMission] = useState<1 | 2 | 3 | 4 | 5>(1);
 
   // Allow desktop users to press Enter or Space to start immediately
   React.useEffect(() => {
@@ -20,7 +20,15 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
         onStart(
-          selectedMission === 1 ? 0 : selectedMission === 2 ? 5 : selectedMission === 3 ? 11 : 12
+          selectedMission === 1
+            ? 0
+            : selectedMission === 2
+            ? 5
+            : selectedMission === 3
+            ? 11
+            : selectedMission === 4
+            ? 12
+            : 13
         );
       }
     };
@@ -73,7 +81,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
         </div>
 
         {/* Mission Switcher Tabs */}
-        <div className="mt-2.5 flex items-center gap-2 bg-black/40 p-1 rounded-2xl border border-white/10">
+        <div className="mt-2.5 grid grid-cols-2 sm:grid-cols-3 gap-1.5 bg-black/40 p-1.5 rounded-2xl border border-white/10">
           <button
             type="button"
             onClick={() => setSelectedMission(1)}
@@ -122,6 +130,18 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
             <span>🛹 Skate</span>
             <span className="text-[10px] bg-rose-950/80 px-1.5 py-0.2 rounded-full border border-amber-300/30">13</span>
           </button>
+          <button
+            type="button"
+            onClick={() => setSelectedMission(5)}
+            className={`flex-1 py-1.5 px-2 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 ${
+              selectedMission === 5
+                ? 'bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white shadow-md border border-emerald-200/80 scale-[1.02]'
+                : 'text-slate-300 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <span>🌟 5 Novas</span>
+            <span className="text-[10px] bg-emerald-950/80 px-1.5 py-0.2 rounded-full border border-emerald-300/30">6-10</span>
+          </button>
         </div>
 
         {/* 5 Stages Roadmap Cards for Selected Mission */}
@@ -147,6 +167,49 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
               <span className="text-base sm:text-lg block">💖</span>
               <span className="text-[10px] font-bold text-purple-300 block truncate">5. Resgate Amor</span>
             </div>
+          </div>
+        ) : selectedMission === 5 ? (
+          <div className="w-full mt-2 grid grid-cols-5 gap-1.5">
+            <button
+              type="button"
+              onClick={() => onStart(13)}
+              className="bg-amber-950/70 border border-amber-400/60 rounded-xl p-1.5 text-center backdrop-blur-sm shadow-md hover:brightness-125 active:scale-95 transition-transform"
+            >
+              <span className="text-base sm:text-lg block">🏖️</span>
+              <span className="text-[10px] font-bold text-amber-300 block truncate">6. Praia</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => onStart(14)}
+              className="bg-emerald-950/70 border border-emerald-400/60 rounded-xl p-1.5 text-center backdrop-blur-sm shadow-md hover:brightness-125 active:scale-95 transition-transform"
+            >
+              <span className="text-base sm:text-lg block">🌲</span>
+              <span className="text-[10px] font-bold text-emerald-300 block truncate">7. Floresta</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => onStart(15)}
+              className="bg-sky-950/70 border border-sky-400/60 rounded-xl p-1.5 text-center backdrop-blur-sm shadow-md hover:brightness-125 active:scale-95 transition-transform"
+            >
+              <span className="text-base sm:text-lg block">❄️</span>
+              <span className="text-[10px] font-bold text-sky-300 block truncate">8. Neve</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => onStart(16)}
+              className="bg-indigo-950/70 border border-indigo-400/60 rounded-xl p-1.5 text-center backdrop-blur-sm shadow-md hover:brightness-125 active:scale-95 transition-transform"
+            >
+              <span className="text-base sm:text-lg block">🚀</span>
+              <span className="text-[10px] font-bold text-indigo-300 block truncate">9. Espaço</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => onStart(17)}
+              className="bg-rose-950/70 border border-rose-400/60 rounded-xl p-1.5 text-center backdrop-blur-sm shadow-md hover:brightness-125 active:scale-95 transition-transform"
+            >
+              <span className="text-base sm:text-lg block">🏰</span>
+              <span className="text-[10px] font-bold text-rose-300 block truncate">10. Castelo</span>
+            </button>
           </div>
         ) : (
           <div className="w-full mt-2 grid grid-cols-5 gap-1.5">
@@ -210,7 +273,15 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
             type="button"
             onClick={() =>
               onStart(
-                selectedMission === 1 ? 0 : selectedMission === 2 ? 5 : selectedMission === 3 ? 11 : 12
+                selectedMission === 1
+                  ? 0
+                  : selectedMission === 2
+                  ? 5
+                  : selectedMission === 3
+                  ? 11
+                  : selectedMission === 4
+                  ? 12
+                  : 13
               )
             }
             className={`w-full h-12 sm:h-13 rounded-2xl text-white font-extrabold text-base sm:text-lg tracking-wide uppercase shadow-2xl border-2 flex items-center justify-center gap-2.5 active:scale-95 transition-transform ${
@@ -220,7 +291,9 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
                 ? 'bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 border-cyan-300/80 shadow-cyan-900/60'
                 : selectedMission === 3
                 ? 'bg-gradient-to-r from-slate-800 via-indigo-900 to-amber-600 border-amber-400/80 shadow-amber-900/60'
-                : 'bg-gradient-to-r from-pink-600 via-rose-500 to-amber-500 border-amber-300/80 shadow-rose-900/60'
+                : selectedMission === 4
+                ? 'bg-gradient-to-r from-pink-600 via-rose-500 to-amber-500 border-amber-300/80 shadow-rose-900/60'
+                : 'bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-600 border-emerald-300/80 shadow-emerald-900/60'
             }`}
           >
             <Play className="w-5 h-5 fill-white text-white drop-shadow" />

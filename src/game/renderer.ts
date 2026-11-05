@@ -53,6 +53,80 @@ export function drawBackground(
   viewH: number,
   time: number
 ) {
+  if (level.theme === 'praia') {
+    const skyGrad = ctx.createLinearGradient(0, 0, 0, viewH);
+    skyGrad.addColorStop(0, '#38bdf8');
+    skyGrad.addColorStop(0.6, '#bae6fd');
+    skyGrad.addColorStop(1, '#fef08a');
+    ctx.fillStyle = skyGrad;
+    ctx.fillRect(0, 0, viewW, viewH);
+
+    // Sol brilhante
+    ctx.fillStyle = '#facc15';
+    ctx.beginPath();
+    ctx.arc(viewW - 90, 75, 36, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Mar azul ao fundo
+    ctx.fillStyle = '#0284c7';
+    ctx.fillRect(0, viewH - 130, viewW, 70);
+    ctx.fillStyle = 'rgba(255,255,255,0.45)';
+    for (let i = 0; i < 10; i++) {
+      const wx = ((i * 140 - (camX * 0.2) % 140) + viewW) % (viewW + 140) - 40;
+      ctx.fillRect(wx, viewH - 115 + Math.sin(time * 3 + i) * 4, 65, 5);
+    }
+    return;
+  }
+
+  if (level.theme === 'floresta') {
+    const skyGrad = ctx.createLinearGradient(0, 0, 0, viewH);
+    skyGrad.addColorStop(0, '#064e3b');
+    skyGrad.addColorStop(0.55, '#047857');
+    skyGrad.addColorStop(1, '#34d399');
+    ctx.fillStyle = skyGrad;
+    ctx.fillRect(0, 0, viewW, viewH);
+
+    // Vagalumes brilhantes!
+    for (let i = 0; i < 24; i++) {
+      const fx = ((i * 113 + Math.sin(time * 1.5 + i) * 25 - camX * 0.15) % viewW + viewW) % viewW;
+      const fy = 80 + ((i * 67 + Math.cos(time * 2 + i) * 20) % (viewH - 160));
+      const alpha = 0.4 + 0.6 * Math.abs(Math.sin(time * 4 + i));
+      ctx.fillStyle = `rgba(254, 240, 138, ${alpha})`;
+      ctx.beginPath();
+      ctx.arc(fx, fy, 4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    return;
+  }
+
+  if (level.theme === 'espaco') {
+    const skyGrad = ctx.createLinearGradient(0, 0, 0, viewH);
+    skyGrad.addColorStop(0, '#020617');
+    skyGrad.addColorStop(0.5, '#1e1b4b');
+    skyGrad.addColorStop(1, '#312e81');
+    ctx.fillStyle = skyGrad;
+    ctx.fillRect(0, 0, viewW, viewH);
+
+    // Estrelas e planetas
+    ctx.fillStyle = '#ffffff';
+    for (let i = 0; i < 40; i++) {
+      const sx = ((i * 97 - camX * 0.05) % viewW + viewW) % viewW;
+      const sy = (i * 47) % (viewH - 80);
+      ctx.fillRect(sx, sy, i % 3 === 0 ? 3 : 2, i % 3 === 0 ? 3 : 2);
+    }
+    // Planeta colorido
+    ctx.fillStyle = '#ec4899';
+    ctx.beginPath();
+    ctx.arc(viewW * 0.75, 110, 34, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#fbcfe8';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.ellipse(viewW * 0.75, 110, 54, 12, -0.25, 0, Math.PI * 2);
+    ctx.stroke();
+    return;
+  }
+
   if (level.theme === 'caverna') {
     const inCave = camX >= 10500;
     const skyGrad = ctx.createLinearGradient(0, 0, 0, viewH);
@@ -833,6 +907,26 @@ export function drawPlatforms(
 
     ctx.save();
 
+    if (p.type === 'shell') {
+      // Conchinha da Praia que faz pular!
+      const cx = rx + p.w / 2;
+      ctx.fillStyle = '#fbcfe8';
+      ctx.strokeStyle = '#db2777';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(cx, p.y + p.h, p.w * 0.42, Math.PI, 0);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#fef08a';
+      ctx.beginPath();
+      ctx.arc(cx, p.y + p.h - 6, 8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+      continue;
+    }
+
     if (p.type === 'spring') {
       const cx = rx + p.w / 2;
       ctx.strokeStyle = '#e2e8f0';
@@ -1096,6 +1190,123 @@ export function drawEnemies(
       ctx.arc(4, -2, 2.5, 0, Math.PI * 2);
       ctx.fill();
 
+      ctx.restore();
+      continue;
+    }
+
+    if (en.type === 'crab') {
+      ctx.save();
+      ctx.translate(ex + en.w / 2, en.y + en.h - 14);
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 18, 12, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // Garras
+      ctx.beginPath();
+      ctx.arc(-18, -10, 6, 0, Math.PI * 2);
+      ctx.arc(18, -10, 6, 0, Math.PI * 2);
+      ctx.fill();
+      // Olhos
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(-6, -12, 4, 0, Math.PI * 2);
+      ctx.arc(6, -12, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#1c1917';
+      ctx.beginPath();
+      ctx.arc(-6, -12, 2, 0, Math.PI * 2);
+      ctx.arc(6, -12, 2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+      continue;
+    }
+
+    if (en.type === 'bee') {
+      ctx.save();
+      ctx.translate(ex + en.w / 2, en.y + en.h / 2 + Math.sin(time * 8 + en.id) * 6);
+      // Asas
+      ctx.fillStyle = 'rgba(255,255,255,0.8)';
+      ctx.beginPath();
+      ctx.ellipse(-4, -12, 8, 5, -0.3, 0, Math.PI * 2);
+      ctx.ellipse(4, -12, 8, 5, 0.3, 0, Math.PI * 2);
+      ctx.fill();
+      // Corpo amarelo e preto
+      ctx.fillStyle = '#facc15';
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 16, 11, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#1c1917';
+      ctx.fillRect(-5, -10, 4, 20);
+      ctx.fillRect(3, -10, 4, 20);
+      ctx.restore();
+      continue;
+    }
+
+    if (en.type === 'snowman') {
+      ctx.save();
+      ctx.translate(ex + en.w / 2, en.y + en.h);
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(0, -14, 15, 0, Math.PI * 2);
+      ctx.arc(0, -34, 11, 0, Math.PI * 2);
+      ctx.fill();
+      // Cachecol vermelho
+      ctx.fillStyle = '#ef4444';
+      ctx.fillRect(-10, -25, 20, 5);
+      // Nariz de cenoura
+      ctx.fillStyle = '#f97316';
+      ctx.beginPath();
+      ctx.moveTo(0, -34);
+      ctx.lineTo(10, -32);
+      ctx.lineTo(0, -30);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+      continue;
+    }
+
+    if (en.type === 'robot') {
+      ctx.save();
+      ctx.translate(ex + en.w / 2, en.y + en.h);
+      ctx.fillStyle = '#64748b';
+      ctx.fillRect(-15, -34, 30, 34);
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillRect(-10, -28, 20, 8);
+      ctx.fillStyle = '#facc15';
+      ctx.beginPath();
+      ctx.arc(0, -40, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+      continue;
+    }
+
+    if (en.type === 'boss') {
+      ctx.save();
+      ctx.translate(ex + en.w / 2, en.y + en.h);
+      // Chefão gigante do Castelo!
+      ctx.fillStyle = '#7e22ce';
+      ctx.beginPath();
+      ctx.roundRect(-36, -72, 72, 72, 16);
+      ctx.fill();
+      ctx.strokeStyle = '#facc15';
+      ctx.lineWidth = 4;
+      ctx.stroke();
+      // Coroa
+      ctx.fillStyle = '#facc15';
+      ctx.beginPath();
+      ctx.moveTo(-22, -72);
+      ctx.lineTo(-14, -90);
+      ctx.lineTo(0, -76);
+      ctx.lineTo(14, -90);
+      ctx.lineTo(22, -72);
+      ctx.closePath();
+      ctx.fill();
+      // Olhos bravos
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath();
+      ctx.arc(-14, -44, 7, 0, Math.PI * 2);
+      ctx.arc(14, -44, 7, 0, Math.PI * 2);
+      ctx.fill();
       ctx.restore();
       continue;
     }
