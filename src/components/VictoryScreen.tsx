@@ -14,6 +14,7 @@ interface VictoryScreenProps {
   onRestart: () => void;
   onStartMission2?: () => void;
   onStartHomeJourney?: () => void;
+  onStartBatcave?: () => void;
   onExitGame?: () => void;
 }
 
@@ -23,11 +24,13 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
   onRestart,
   onStartMission2,
   onStartHomeJourney,
+  onStartBatcave,
   onExitGame,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isMission2Complete = stageIndex >= 5 && stageIndex < 10;
-  const isHomeComplete = stageIndex >= 10;
+  const isHomeComplete = stageIndex === 10;
+  const isBatcaveComplete = stageIndex >= 11;
 
   // Trigger celebration confetti with hearts and colors
   useEffect(() => {
@@ -313,7 +316,9 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
       <div className="relative z-10 flex flex-col justify-center flex-1 max-w-lg w-full text-center sm:text-left">
         <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-amber-400/20 border border-amber-300/40 text-amber-200 text-xs font-bold tracking-wider uppercase mb-1 w-fit mx-auto sm:mx-0">
           <Trophy className="w-4 h-4 text-amber-300 animate-bounce" />
-          {isHomeComplete
+          {isBatcaveComplete
+            ? 'Aventura Concluída! Caverna do Batima! 🦇'
+            : isHomeComplete
             ? 'Missão Concluída! Fim da Aventura!'
             : isMission2Complete
             ? 'Missão 2 Cumprida!'
@@ -322,14 +327,18 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
 
         {/* Heading */}
         <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white drop-shadow-[0_2px_12px_rgba(244,63,94,0.7)]">
-          {isHomeComplete
+          {isBatcaveComplete
+            ? 'Bem-vindo à Caverna do Batima! 🦇'
+            : isHomeComplete
             ? 'Bem-vindo de volta para casa, Theo! 🏠❤️'
             : isMission2Complete
             ? 'Você resgatou o Ursinho Carinho!'
             : 'Você resgatou o Amor!'}
         </h1>
         <p className="text-xs sm:text-sm font-semibold text-rose-200 mt-0.5">
-          {isHomeComplete
+          {isBatcaveComplete
+            ? 'O Batima recepcionou Theo Lucca na entrada secreta e o convidou para conhecer toda a caverna!'
+            : isHomeComplete
             ? 'Theo Lucca guardou Amor e Carinho na mochila, voltou pela cidade e reencontrou seu papai e sua mamãe muito felizes!'
             : isMission2Complete
             ? 'Theo Lucca colocou os dois ursinhos na mochila! Agora siga a aventura pelo caminho de volta para casa!'
@@ -341,7 +350,7 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
           <div>
             <span className="text-[11px] text-slate-300 block font-medium">Fases Vencidas</span>
             <span className="text-base font-extrabold text-amber-300">
-              {isHomeComplete ? '11 / 11' : isMission2Complete ? '10 / 10' : '5 / 5'}
+              {isBatcaveComplete ? '12 / 12' : isHomeComplete ? '11 / 11' : isMission2Complete ? '10 / 10' : '5 / 5'}
             </span>
           </div>
           <div className="w-px h-8 bg-white/20" />
@@ -356,7 +365,9 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
           <div>
             <span className="text-[11px] text-slate-300 block font-medium">Resultado</span>
             <span className="text-base font-extrabold text-emerald-400">
-              {isHomeComplete
+              {isBatcaveComplete
+                ? 'Herói da Caverna! 🦇'
+                : isHomeComplete
                 ? 'Família Reunida! 👑'
                 : isMission2Complete
                 ? 'Ursinhos na Mochila! 🎒'
@@ -367,7 +378,7 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
 
         {/* Buttons */}
         <div className="mt-4 flex flex-col gap-2">
-          {!isMission2Complete && !isHomeComplete && onStartMission2 && (
+          {!isMission2Complete && !isHomeComplete && !isBatcaveComplete && onStartMission2 && (
             <button
               type="button"
               onClick={onStartMission2}
@@ -387,6 +398,16 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
             </button>
           )}
 
+          {isHomeComplete && onStartBatcave && (
+            <button
+              type="button"
+              onClick={onStartBatcave}
+              className="w-full h-13 sm:h-14 rounded-2xl bg-gradient-to-r from-slate-800 via-indigo-900 to-amber-600 active:brightness-110 text-amber-200 font-black text-sm sm:text-base tracking-wide uppercase shadow-2xl shadow-slate-950/80 border-2 border-amber-400 flex items-center justify-center gap-2 active:scale-95 transition-transform"
+            >
+              <span>Nova Aventura: Caverna do Batima 🦇</span>
+            </button>
+          )}
+
           <button
             type="button"
             onClick={onRestart}
@@ -394,7 +415,7 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({
           >
             <RotateCcw className="w-4 h-4 text-white stroke-[2.5]" />
             <span>
-              {isHomeComplete || isMission2Complete
+              {isBatcaveComplete || isHomeComplete || isMission2Complete
                 ? 'Jogar Novamente desde o Início'
                 : 'Repetir Missão 1'}
             </span>

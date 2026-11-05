@@ -3,7 +3,7 @@
  * Handles backgrounds, scenery, platforms, hearts, mushrooms, rewards, Amor, cutscene and particles
  */
 
-import { LevelData, Platform, HeartItem, Hazard, Enemy, RewardItem, FruitItem, WebAnchor } from './levels';
+import { LevelData, Platform, HeartItem, CoinItem, Hazard, Enemy, RewardItem, FruitItem, WebAnchor } from './levels';
 import { CharacterSprites } from './spriteLoader';
 
 // Canvas roundRect polyfill for maximum browser and webview compatibility
@@ -53,6 +53,67 @@ export function drawBackground(
   viewH: number,
   time: number
 ) {
+  if (level.theme === 'caverna') {
+    const inCave = camX >= 10500;
+    const skyGrad = ctx.createLinearGradient(0, 0, 0, viewH);
+    if (inCave) {
+      // Dentro da Caverna do Batima!
+      skyGrad.addColorStop(0, '#05070c');
+      skyGrad.addColorStop(0.5, '#111827');
+      skyGrad.addColorStop(1, '#1e1b4b');
+    } else {
+      // Noite misteriosa a caminho da caverna
+      skyGrad.addColorStop(0, '#090d16');
+      skyGrad.addColorStop(0.55, '#1e1b4b');
+      skyGrad.addColorStop(1, '#312e81');
+    }
+    ctx.fillStyle = skyGrad;
+    ctx.fillRect(0, 0, viewW, viewH);
+
+    if (!inCave) {
+      // Estrelas e Bat-Sinal no céu noturno
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+      for (let i = 0; i < 28; i++) {
+        const sx = ((i * 137 + camX * 0.04) % viewW + viewW) % viewW;
+        const sy = (i * 53) % (viewH * 0.55);
+        ctx.fillRect(sx, sy, 2, 2);
+      }
+      // Feixe do Bat-Sinal
+      const sigX = viewW * 0.75;
+      const sigY = 85;
+      const beamGrad = ctx.createLinearGradient(sigX - 60, viewH, sigX, sigY);
+      beamGrad.addColorStop(0, 'rgba(250, 204, 21, 0.04)');
+      beamGrad.addColorStop(1, 'rgba(250, 204, 21, 0.25)');
+      ctx.fillStyle = beamGrad;
+      ctx.beginPath();
+      ctx.moveTo(sigX - 90, viewH);
+      ctx.lineTo(sigX - 28, sigY);
+      ctx.lineTo(sigX + 28, sigY);
+      ctx.lineTo(sigX + 40, viewH);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(250, 204, 21, 0.35)';
+      ctx.beginPath();
+      ctx.arc(sigX, sigY, 28, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      // Estalactites no teto da caverna
+      ctx.fillStyle = '#0f172a';
+      for (let i = 0; i < 14; i++) {
+        const stX = ((i * 95 - (camX * 0.25) % 95) + viewW) % (viewW + 95) - 40;
+        const stH = 38 + (i % 3) * 18;
+        ctx.beginPath();
+        ctx.moveTo(stX, 0);
+        ctx.lineTo(stX + 22, stH);
+        ctx.lineTo(stX + 44, 0);
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
+    return;
+  }
+
   if (level.theme === 'parque') {
     // Sky gradient
     const skyGrad = ctx.createLinearGradient(0, 0, 0, viewH);
@@ -974,7 +1035,70 @@ export function drawEnemies(
     if (!en.alive && (!en.squishTimer || en.squishTimer <= 0)) continue;
 
     const ex = en.x - camX;
-    if (ex < -40 || ex > 600) continue;
+    if (ex < -60 || ex > 1200) continue;
+
+    if (en.type === 'bat') {
+      ctx.save();
+      ctx.translate(ex + en.w / 2, en.y + en.h / 2);
+      if (en.squishTimer && en.squishTimer > 0) {
+        ctx.scale(1.3, 0.3);
+      }
+      const flap = Math.sin(time * 18 + en.id) * 0.55;
+      // Asas do morcego
+      ctx.fillStyle = '#1e1b4b';
+      ctx.strokeStyle = '#0f172a';
+      ctx.lineWidth = 2;
+      // Asa esquerda
+      ctx.save();
+      ctx.rotate(-flap);
+      ctx.beginPath();
+      ctx.moveTo(-4, 0);
+      ctx.quadraticCurveTo(-20, -16, -26, 2);
+      ctx.quadraticCurveTo(-15, 8, -4, 4);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+      // Asa direita
+      ctx.save();
+      ctx.rotate(flap);
+      ctx.beginPath();
+      ctx.moveTo(4, 0);
+      ctx.quadraticCurveTo(20, -16, 26, 2);
+      ctx.quadraticCurveTo(15, 8, 4, 4);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+
+      // Corpo e orelhas
+      ctx.fillStyle = '#312e81';
+      ctx.beginPath();
+      ctx.arc(0, 0, 11, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(-8, -7);
+      ctx.lineTo(-11, -16);
+      ctx.lineTo(-3, -10);
+      ctx.closePath();
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(8, -7);
+      ctx.lineTo(11, -16);
+      ctx.lineTo(3, -10);
+      ctx.closePath();
+      ctx.fill();
+
+      // Olhos brilhantes
+      ctx.fillStyle = '#facc15';
+      ctx.beginPath();
+      ctx.arc(-4, -2, 2.5, 0, Math.PI * 2);
+      ctx.arc(4, -2, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+      continue;
+    }
 
     ctx.save();
     ctx.translate(ex + en.w / 2, en.y + en.h);
@@ -1683,6 +1807,108 @@ export function drawHearts(
   }
 }
 
+export function drawCoins(
+  ctx: CanvasRenderingContext2D,
+  coins: CoinItem[] | undefined,
+  camX: number,
+  time: number
+) {
+  if (!coins) return;
+  for (const c of coins) {
+    if (c.collected) continue;
+    const cx = c.x - camX;
+    if (cx < -30 || cx > 1200) continue;
+
+    const bob = Math.sin(time * 5 + c.id) * 4;
+    const spin = Math.abs(Math.cos(time * 4 + c.id * 0.5));
+    const rx = Math.max(4, 13 * spin);
+
+    ctx.save();
+    ctx.translate(cx, c.y + bob);
+
+    // Brilho dourado
+    ctx.fillStyle = 'rgba(250, 204, 21, 0.3)';
+    ctx.beginPath();
+    ctx.arc(0, 0, 18, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Moeda dourada
+    ctx.fillStyle = '#facc15';
+    ctx.strokeStyle = '#ca8a04';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, rx, 13, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    if (rx > 7) {
+      ctx.fillStyle = '#fef08a';
+      ctx.font = 'bold 12px Fredoka, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('$', 0, 1);
+    }
+
+    ctx.restore();
+  }
+}
+
+export function drawChaserMushroom(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  camX: number,
+  time: number
+) {
+  const cx = x - camX;
+  if (cx < -100 || cx > 1200) return;
+
+  ctx.save();
+  ctx.translate(cx, y);
+  const hop = Math.abs(Math.sin(time * 12)) * 8;
+  const tilt = Math.sin(time * 12) * 0.1;
+  ctx.translate(0, -hop);
+  ctx.rotate(tilt);
+
+  // Caule
+  ctx.fillStyle = '#fef3c7';
+  ctx.beginPath();
+  ctx.roundRect(-16, -26, 32, 26, [0, 0, 8, 8]);
+  ctx.fill();
+
+  // Chapéu vermelho gigante
+  ctx.fillStyle = '#dc2626';
+  ctx.beginPath();
+  ctx.arc(0, -28, 28, Math.PI, 0);
+  ctx.closePath();
+  ctx.fill();
+
+  // Pintinhas brancas
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.arc(-12, -40, 5, 0, Math.PI * 2);
+  ctx.arc(10, -42, 4.5, 0, Math.PI * 2);
+  ctx.arc(0, -50, 4, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Olhos bravos perseguindo Theo!
+  ctx.fillStyle = '#1c1917';
+  ctx.beginPath();
+  ctx.arc(-7, -15, 3.5, 0, Math.PI * 2);
+  ctx.arc(7, -15, 3.5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#1c1917';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.moveTo(-12, -21);
+  ctx.lineTo(-3, -18);
+  ctx.moveTo(12, -21);
+  ctx.lineTo(3, -18);
+  ctx.stroke();
+
+  ctx.restore();
+}
+
 export function drawHazards(
   ctx: CanvasRenderingContext2D,
   hazards: Hazard[],
@@ -1870,6 +2096,124 @@ export function drawGoal(
   if (gx < -250 || gx > 1400) return;
 
   ctx.save();
+
+  if (level.id === 12) {
+    // Entrada da Caverna do Batima + Personagem caracterizado de Batima recepcionando Theo!
+    const caveX = gx + 30;
+    const caveY = g.y + g.h - 150;
+    const caveW = 165;
+    const caveH = 150;
+
+    // Arco rochoso da caverna
+    ctx.fillStyle = '#1e293b';
+    ctx.strokeStyle = '#0f172a';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.arc(caveX + caveW / 2, caveY + caveH, caveW / 2, Math.PI, 0);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Interior escuro da caverna
+    ctx.fillStyle = '#030712';
+    ctx.beginPath();
+    ctx.arc(caveX + caveW / 2, caveY + caveH, caveW / 2 - 22, Math.PI, 0);
+    ctx.closePath();
+    ctx.fill();
+
+    // Emblema amarelo do Batima acima da entrada
+    ctx.fillStyle = '#facc15';
+    ctx.beginPath();
+    ctx.ellipse(caveX + caveW / 2, caveY + 34, 24, 13, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#0f172a';
+    ctx.beginPath();
+    ctx.arc(caveX + caveW / 2, caveY + 34, 8, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Personagem caracterizado de Batima recepcionando Theo!
+    const batX = gx - 8;
+    const batY = g.y + g.h;
+    ctx.save();
+    ctx.translate(batX, batY);
+
+    // Capa preta esvoaçante
+    ctx.fillStyle = '#0f172a';
+    ctx.beginPath();
+    ctx.moveTo(-12, -48);
+    ctx.lineTo(18 + Math.sin(time * 4) * 4, -8);
+    ctx.lineTo(-16, -8);
+    ctx.closePath();
+    ctx.fill();
+
+    // Corpo cinza escuro
+    ctx.fillStyle = '#334155';
+    ctx.fillRect(-11, -46, 22, 28);
+
+    // Emblema amarelo no peito
+    ctx.fillStyle = '#facc15';
+    ctx.beginPath();
+    ctx.ellipse(0, -35, 7, 4, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Cinto de utilidades amarelo
+    ctx.fillStyle = '#eab308';
+    ctx.fillRect(-11, -22, 22, 5);
+
+    // Pernas
+    ctx.fillStyle = '#1e293b';
+    ctx.fillRect(-9, -18, 7, 18);
+    ctx.fillRect(2, -18, 7, 18);
+
+    // Cabeça com máscara e orelhas de morcego
+    ctx.fillStyle = '#0f172a';
+    ctx.beginPath();
+    ctx.arc(0, -58, 12, 0, Math.PI * 2);
+    ctx.fill();
+    // Orelhas pontudas
+    ctx.beginPath();
+    ctx.moveTo(-10, -64);
+    ctx.lineTo(-12, -77);
+    ctx.lineTo(-4, -68);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(10, -64);
+    ctx.lineTo(12, -77);
+    ctx.lineTo(4, -68);
+    ctx.closePath();
+    ctx.fill();
+
+    // Olhos brancos da máscara
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(-7, -61, 5, 3);
+    ctx.fillRect(2, -61, 5, 3);
+
+    // Queixo e sorriso
+    ctx.fillStyle = '#fed7aa';
+    ctx.beginPath();
+    ctx.arc(0, -54, 7, 0, Math.PI);
+    ctx.fill();
+
+    // Braço acenando convidando para conhecer a caverna
+    ctx.strokeStyle = '#334155';
+    ctx.lineWidth = 5;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(-11, -42);
+    ctx.lineTo(-24, -56 + Math.sin(time * 6) * 6);
+    ctx.stroke();
+
+    ctx.restore();
+
+    ctx.fillStyle = '#facc15';
+    ctx.font = 'bold 14px Fredoka, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Batima: Bem-vindo à Caverna! 🦇', gx + 20, batY - 92);
+
+    ctx.restore();
+    return;
+  }
 
   if (level.id === 11) {
     // Pequena casinha na cidade + Papai e Mamãe esperando felizes!
@@ -2429,7 +2773,8 @@ export function drawPlayer(
   hasMoto: boolean = false,
   isRunning: boolean = false,
   isCrouching: boolean = false,
-  hasBackpackBears: boolean = false
+  hasBackpackBears: boolean = false,
+  isSkateMode: boolean = false
 ) {
   // Invincible flash: skip drawing every few frames if hurt, but if StarPower, show rainbow glow
   if (invincibleTimer > 0 && !hasStarPower && Math.floor(time * 30) % 2 === 0) {
@@ -2473,6 +2818,25 @@ export function drawPlayer(
     ctx.beginPath();
     ctx.arc(bpX + 1, bpY - 21, 2.5, 0, Math.PI * 2);
     ctx.arc(bpX + 9, bpY - 21, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Skate colorido nos pés do Theo na Fase 13!
+  if (isSkateMode) {
+    const skY = h / 2 - 4;
+    ctx.fillStyle = '#ec4899';
+    ctx.strokeStyle = '#831843';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(-24, skY - 5, 48, 7, 4);
+    ctx.fill();
+    ctx.stroke();
+
+    // Rodinhas girando
+    ctx.fillStyle = '#facc15';
+    ctx.beginPath();
+    ctx.arc(-15, skY + 5, 5, 0, Math.PI * 2);
+    ctx.arc(15, skY + 5, 5, 0, Math.PI * 2);
     ctx.fill();
   }
 

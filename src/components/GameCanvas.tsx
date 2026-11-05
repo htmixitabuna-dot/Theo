@@ -23,6 +23,8 @@ import {
   drawParticles,
   drawWebAnchors,
   drawWebGrapple,
+  drawCoins,
+  drawChaserMushroom,
   Particle,
 } from '../game/renderer';
 import { TouchControls } from './TouchControls';
@@ -647,7 +649,7 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
             }
           });
 
-          // 3. Move and Update Cogumelos (Mushroom Enemies)
+          // 3. Move and Update Cogumelos & Morcegos (Enemies)
           level.enemies.forEach((en) => {
             if (en.squishTimer && en.squishTimer > 0) {
               en.squishTimer -= dt;
@@ -656,6 +658,16 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
               en.x += en.vx;
               if (en.x < en.minX || en.x + en.w > en.maxX) {
                 en.vx = -en.vx;
+              }
+              if (en.type === 'bat') {
+                const distToPlayer = Math.abs((en.x + en.w / 2) - (p.x + p.w / 2));
+                if (distToPlayer < 420) {
+                  // Morcego mergulha para atacar Theo Lucca!
+                  en.y += Math.sin(gameTime * 7 + en.id) * 1.5 + (p.y - en.y) * 0.03;
+                } else {
+                  en.y += Math.sin(gameTime * 5 + en.id) * 1.4;
+                }
+                en.y = Math.max(140, Math.min(460, en.y));
               }
             }
           });
@@ -790,7 +802,12 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
           }
 
           const isPlayerRunning = input.run && (input.left || input.right);
-          p.isRunning = isPlayerRunning;
+          p.isRunning = isPlayerRunning || Boolean(level.isSkateMode);
+
+          if (level.isSkateMode) {
+            p.facing = 'right';
+            p.vx = input.right || input.run ? 8.2 : 6.4;
+          }
 
           let ACCEL = 1.4;
           let MAX_SPEED = 5.6;
@@ -1240,8 +1257,13 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
             p.y < goal.y + goal.h + 20;
 
           if (reachedGoal && !stageClearedRef.current) {
-            if (currentStageIndex === 4 || currentStageIndex === 9 || currentStageIndex === LEVELS.length - 1) {
-              // Final da Missão 1 (Fase 5), Final da Missão 2 (Fase 10) OU Final do Caminho de Casa (Fase 11)!
+            if (
+              currentStageIndex === 4 ||
+              currentStageIndex === 9 ||
+              currentStageIndex === 10 ||
+              currentStageIndex === LEVELS.length - 1
+            ) {
+              // Final da Missão 1 (Fase 5), Missão 2 (Fase 10), Caminho de Casa (Fase 11) OU Caverna do Batima (Fase 12)!
               stageClearedRef.current = true;
               cutscene.active = true;
               cutscene.startTime = gameTime;
@@ -1320,6 +1342,48 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
         // Hearts
         drawHearts(ctx, level.hearts, camX, gameTime);
 
+        // Coins (Fase 13: Corrida de Skate!)
+        if (level.coins) {
+          level.coins.forEach((c) => {
+            if (
+              !c.collected &&
+              p.x + p.w > c.x - 16 &&
+              p.x < c.x + 16 &&
+              p.y + p.h > c.y - 16 &&
+              p.y < c.y + 16
+            ) {
+              c.collected = true;
+              sounds.playCoin();
+              for (let k = 0; k < 6; k++) {
+                particlesRef.current.push({
+                  x: c.x,
+                  y: c.y,
+                  vx: (Math.random() - 0.5) * 4,
+                  vy: -Math.random() * 4 - 1,
+                  size: 4,
+                  color: '#facc15',
+                  alpha: 1,
+                  life: 0,
+                  maxLife: 22,
+                  isStar: true,
+                });
+              }
+            }
+          });
+          drawCoins(ctx, level.coins, camX, gameTime);
+        }
+
+        // Cogumelo gigante correndo atrás do Theo na Fase 13!
+        if (level.isSkateMode) {
+          drawChaserMushroom(
+            ctx,
+            p.x - 105 + Math.sin(gameTime * 8) * 16,
+            520,
+            camX,
+            gameTime
+          );
+        }
+
         // Cogumelos (Mushroom Enemies)
         drawEnemies(ctx, level.enemies, camX, gameTime);
 
@@ -1385,7 +1449,8 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
             p.hasMoto,
             p.isRunning,
             p.isCrouching,
-            level.id === 11
+            level.id === 11,
+            Boolean(level.isSkateMode)
           );
         }
 

@@ -33,9 +33,16 @@ export interface HeartItem {
   collected: boolean;
 }
 
+export interface CoinItem {
+  id: number;
+  x: number;
+  y: number;
+  collected: boolean;
+}
+
 export interface Enemy {
   id: number;
-  type: 'mushroom';
+  type: 'mushroom' | 'bat';
   x: number;
   y: number;
   w: number;
@@ -90,10 +97,11 @@ export interface LevelData {
   id: number;
   name: string;
   subtitle: string;
-  theme: 'parque' | 'cidade' | 'castelo' | 'masmorra' | 'doces' | 'cristais' | 'nuvens' | 'brinquedos' | 'neve';
+  theme: 'parque' | 'cidade' | 'castelo' | 'masmorra' | 'doces' | 'cristais' | 'nuvens' | 'brinquedos' | 'neve' | 'caverna';
   mission?: 1 | 2;
   rescueTarget?: 'amor' | 'carinho';
   hasWebPower?: boolean;
+  isSkateMode?: boolean;
   webAnchors?: WebAnchor[];
   worldWidth: number;
   worldHeight: number;
@@ -101,6 +109,7 @@ export interface LevelData {
   goal: { x: number; y: number; w: number; h: number; label: string };
   platforms: Platform[];
   hearts: HeartItem[];
+  coins?: CoinItem[];
   enemies: Enemy[];
   rewards: RewardItem[];
   fruits?: FruitItem[];
@@ -1810,6 +1819,237 @@ export const LEVELS: LevelData[] = [
       { type: 'tree', x: 8800, y: 520 },
       { type: 'building', x: 10600, y: 520 },
       { type: 'tree', x: 11100, y: 520 },
+    ],
+  },
+  {
+    id: 12,
+    name: 'Fase 12: Caverna do Batima',
+    subtitle: 'Atravesse a noite e os morcegos até o esconderijo secreto!',
+    theme: 'caverna',
+    hasWebPower: true,
+    webAnchors: [
+      { id: 1201, x: 2550, y: 170, label: 'Argola de Teia' },
+      { id: 1202, x: 5600, y: 160, label: 'Argola de Teia' },
+      { id: 1203, x: 8800, y: 170, label: 'Argola de Teia' },
+      { id: 1204, x: 12100, y: 160, label: 'Argola de Teia' },
+      { id: 1205, x: 15200, y: 170, label: 'Argola de Teia' },
+    ],
+    worldWidth: 18000,
+    worldHeight: 580,
+    playerStart: { x: 80, y: 420 },
+    goal: { x: 17450, y: 360, w: 200, h: 160, label: 'Caverna do Batima' },
+    checkpoints: [
+      { x: 3200, y: 420, reached: false },
+      { x: 6400, y: 420, reached: false },
+      { x: 9600, y: 420, reached: false },
+      { x: 12800, y: 420, reached: false },
+      { x: 15800, y: 420, reached: false },
+    ],
+    platforms: [
+      { x: 0, y: 520, w: 2340, h: 60, type: 'ground' },
+      { x: 450, y: 400, w: 170, h: 24, type: 'stone' },
+      { x: 850, y: 310, w: 180, h: 24, type: 'wood' },
+      { x: 1280, y: 230, w: 190, h: 24, type: 'stone' },
+      { x: 1720, y: 360, w: 180, h: 24, type: 'wood' },
+      { x: 2140, y: 440, w: 150, h: 24, type: 'spring' },
+
+      // Abismo 1 (Teia: 2340 -> 2760)
+      { x: 2760, y: 520, w: 2630, h: 60, type: 'ground' },
+      { x: 3400, y: 390, w: 170, h: 24, type: 'moving', moveRange: 140, moveSpeed: 2, direction: 'horizontal', startX: 3400, startY: 390 },
+      { x: 3950, y: 270, w: 180, h: 24, type: 'stone' },
+      { x: 4450, y: 370, w: 180, h: 24, type: 'wood' },
+      { x: 4950, y: 280, w: 170, h: 24, type: 'stone' },
+      { x: 5220, y: 440, w: 140, h: 24, type: 'spring' },
+
+      // Abismo 2 (Teia: 5390 -> 5810)
+      { x: 5810, y: 520, w: 2780, h: 60, type: 'ground' },
+      { x: 6450, y: 380, w: 170, h: 24, type: 'stone' },
+      { x: 6950, y: 260, w: 180, h: 24, type: 'moving', moveRange: 140, moveSpeed: 2.2, direction: 'horizontal', startX: 6950, startY: 260 },
+      { x: 7500, y: 370, w: 170, h: 24, type: 'wood' },
+      { x: 8000, y: 280, w: 170, h: 24, type: 'stone' },
+      { x: 8420, y: 440, w: 140, h: 24, type: 'spring' },
+
+      // Abismo 3 (Teia: 8590 -> 9010) -> A partir de 10500 o cenário muda para a Caverna!
+      { x: 9010, y: 520, w: 2880, h: 60, type: 'ground' },
+      { x: 9650, y: 380, w: 170, h: 24, type: 'stone' },
+      { x: 10200, y: 260, w: 180, h: 24, type: 'stone' },
+      { x: 10800, y: 370, w: 170, h: 24, type: 'stone' },
+      { x: 11300, y: 270, w: 170, h: 24, type: 'moving', moveRange: 130, moveSpeed: 2.2, direction: 'horizontal', startX: 11300, startY: 270 },
+      { x: 11720, y: 440, w: 140, h: 24, type: 'spring' },
+
+      // Abismo 4 (Teia: 11890 -> 12310)
+      { x: 12310, y: 520, w: 2680, h: 60, type: 'ground' },
+      { x: 12950, y: 380, w: 170, h: 24, type: 'stone' },
+      { x: 13500, y: 260, w: 180, h: 24, type: 'stone' },
+      { x: 14050, y: 370, w: 170, h: 24, type: 'stone' },
+      { x: 14500, y: 280, w: 170, h: 24, type: 'stone' },
+      { x: 14820, y: 440, w: 140, h: 24, type: 'spring' },
+
+      // Abismo 5 (Teia: 14990 -> 15410) -> Reta final na Caverna do Batima!
+      { x: 15410, y: 520, w: 2590, h: 60, type: 'ground' },
+      { x: 16000, y: 390, w: 170, h: 24, type: 'stone' },
+      { x: 16500, y: 310, w: 170, h: 24, type: 'stone' },
+    ],
+    hazards: [
+      { x: 1100, y: 492, w: 60, h: 28, type: 'spark' },
+      { x: 3750, y: 492, w: 70, h: 28, type: 'slime' },
+      { x: 6750, y: 492, w: 60, h: 28, type: 'spark' },
+      { x: 10000, y: 492, w: 70, h: 28, type: 'slime' },
+      { x: 13300, y: 492, w: 60, h: 28, type: 'spark' },
+      { x: 16300, y: 492, w: 70, h: 28, type: 'slime' },
+    ],
+    enemies: [
+      // Morcegos que atacam Theo Lucca!
+      { id: 1201, type: 'bat', x: 950, y: 330, w: 46, h: 36, vx: 2.0, minX: 700, maxX: 1250, alive: true },
+      { id: 1202, type: 'bat', x: 1950, y: 300, w: 46, h: 36, vx: -2.1, minX: 1650, maxX: 2200, alive: true },
+      { id: 1203, type: 'mushroom', x: 3250, y: 476, w: 44, h: 44, vx: 1.7, minX: 3100, maxX: 3450, alive: true },
+      { id: 1204, type: 'bat', x: 4200, y: 310, w: 46, h: 36, vx: 2.2, minX: 3900, maxX: 4550, alive: true },
+      { id: 1205, type: 'bat', x: 6200, y: 320, w: 46, h: 36, vx: -2.2, minX: 5950, maxX: 6550, alive: true },
+      { id: 1206, type: 'bat', x: 7750, y: 290, w: 46, h: 36, vx: 2.3, minX: 7450, maxX: 8100, alive: true },
+      { id: 1207, type: 'mushroom', x: 9500, y: 476, w: 44, h: 44, vx: 1.8, minX: 9350, maxX: 9700, alive: true },
+      { id: 1208, type: 'bat', x: 10600, y: 300, w: 46, h: 36, vx: -2.4, minX: 10300, maxX: 11000, alive: true },
+      { id: 1209, type: 'bat', x: 11500, y: 280, w: 46, h: 36, vx: 2.4, minX: 11200, maxX: 11750, alive: true },
+      { id: 1210, type: 'bat', x: 12800, y: 310, w: 46, h: 36, vx: -2.5, minX: 12500, maxX: 13150, alive: true },
+      { id: 1211, type: 'bat', x: 13900, y: 290, w: 46, h: 36, vx: 2.5, minX: 13600, maxX: 14250, alive: true },
+      { id: 1212, type: 'bat', x: 14650, y: 300, w: 46, h: 36, vx: -2.5, minX: 14350, maxX: 14850, alive: true },
+      { id: 1213, type: 'bat', x: 15900, y: 310, w: 46, h: 36, vx: 2.6, minX: 15600, maxX: 16250, alive: true },
+      { id: 1214, type: 'bat', x: 16750, y: 290, w: 46, h: 36, vx: -2.6, minX: 16450, maxX: 17050, alive: true },
+    ],
+    rewards: [
+      { id: 1201, x: 320, y: 475, w: 44, h: 36, type: 'moto', collected: false },
+      { id: 1202, x: 910, y: 265, w: 32, h: 32, type: 'star', collected: false },
+      { id: 1203, x: 1340, y: 185, w: 38, h: 36, type: 'chest', collected: false },
+      { id: 1204, x: 3100, y: 475, w: 44, h: 36, type: 'moto', collected: false },
+      { id: 1205, x: 4010, y: 225, w: 32, h: 32, type: 'shield', collected: false },
+      { id: 1206, x: 6500, y: 335, w: 32, h: 32, type: 'armor', collected: false },
+      { id: 1207, x: 9300, y: 475, w: 44, h: 36, type: 'moto', collected: false },
+      { id: 1208, x: 10260, y: 215, w: 38, h: 36, type: 'chest', collected: false },
+      { id: 1209, x: 13560, y: 215, w: 32, h: 32, type: 'star', collected: false },
+      { id: 1210, x: 16060, y: 345, w: 32, h: 32, type: 'superHeart', collected: false },
+    ],
+    hearts: [
+      { id: 1201, x: 500, y: 350, collected: false },
+      { id: 1202, x: 920, y: 260, collected: false },
+      { id: 1203, x: 1350, y: 180, collected: false },
+      { id: 1204, x: 2550, y: 220, collected: false },
+      { id: 1205, x: 3480, y: 340, collected: false },
+      { id: 1206, x: 4020, y: 220, collected: false },
+      { id: 1207, x: 5600, y: 220, collected: false },
+      { id: 1208, x: 6520, y: 330, collected: false },
+      { id: 1209, x: 7020, y: 210, collected: false },
+      { id: 1210, x: 8800, y: 220, collected: false },
+      { id: 1211, x: 9720, y: 330, collected: false },
+      { id: 1212, x: 10280, y: 210, collected: false },
+      { id: 1213, x: 12100, y: 220, collected: false },
+      { id: 1214, x: 13020, y: 330, collected: false },
+      { id: 1215, x: 13580, y: 210, collected: false },
+      { id: 1216, x: 15200, y: 220, collected: false },
+      { id: 1217, x: 16080, y: 340, collected: false },
+      { id: 1218, x: 16580, y: 260, collected: false },
+    ],
+    sceneryElements: [
+      { type: 'tree', x: 300, y: 520 },
+      { type: 'building', x: 900, y: 520 },
+      { type: 'tree', x: 1600, y: 520 },
+      { type: 'building', x: 3100, y: 520 },
+      { type: 'tree', x: 4100, y: 520 },
+      { type: 'building', x: 6100, y: 520 },
+      { type: 'tree', x: 7200, y: 520 },
+      { type: 'building', x: 9300, y: 520 },
+      { type: 'giantCrystal', x: 10800, y: 520 },
+      { type: 'giantCrystal', x: 11500, y: 520 },
+      { type: 'giantCrystal', x: 12700, y: 520 },
+      { type: 'giantCrystal', x: 13800, y: 520 },
+      { type: 'giantCrystal', x: 14700, y: 520 },
+      { type: 'giantCrystal', x: 15800, y: 520 },
+      { type: 'giantCrystal', x: 16800, y: 520 },
+    ],
+  },
+  {
+    id: 13,
+    name: 'Fase 13: Corrida de Skate!',
+    subtitle: 'Fuja do Cogumelo gigante no skate e colete todas as moedas!',
+    theme: 'cidade',
+    isSkateMode: true,
+    worldWidth: 14000,
+    worldHeight: 580,
+    playerStart: { x: 160, y: 420 },
+    goal: { x: 13500, y: 380, w: 180, h: 140, label: 'Chegada do Skate' },
+    checkpoints: [
+      { x: 3500, y: 420, reached: false },
+      { x: 7000, y: 420, reached: false },
+      { x: 10500, y: 420, reached: false },
+    ],
+    platforms: [
+      { x: 0, y: 520, w: 14000, h: 60, type: 'ground' },
+      { x: 900, y: 410, w: 240, h: 22, type: 'rooftop' },
+      { x: 2100, y: 390, w: 260, h: 22, type: 'rooftop' },
+      { x: 3600, y: 410, w: 240, h: 22, type: 'rooftop' },
+      { x: 5100, y: 380, w: 280, h: 22, type: 'rooftop' },
+      { x: 6800, y: 410, w: 240, h: 22, type: 'rooftop' },
+      { x: 8400, y: 390, w: 260, h: 22, type: 'rooftop' },
+      { x: 10100, y: 410, w: 240, h: 22, type: 'rooftop' },
+      { x: 11700, y: 380, w: 280, h: 22, type: 'rooftop' },
+    ],
+    hazards: [
+      { x: 650, y: 492, w: 54, h: 28, type: 'cone' },
+      { x: 1450, y: 492, w: 64, h: 28, type: 'puddle' },
+      { x: 2650, y: 492, w: 54, h: 28, type: 'cone' },
+      { x: 3200, y: 405, w: 90, h: 24, type: 'lowBeam', isOverhead: true },
+      { x: 4200, y: 492, w: 64, h: 28, type: 'puddle' },
+      { x: 4750, y: 492, w: 54, h: 28, type: 'cone' },
+      { x: 5750, y: 405, w: 90, h: 24, type: 'lowBeam', isOverhead: true },
+      { x: 6350, y: 492, w: 54, h: 28, type: 'cone' },
+      { x: 7450, y: 492, w: 64, h: 28, type: 'puddle' },
+      { x: 8000, y: 405, w: 90, h: 24, type: 'lowBeam', isOverhead: true },
+      { x: 9000, y: 492, w: 54, h: 28, type: 'cone' },
+      { x: 9650, y: 492, w: 64, h: 28, type: 'puddle' },
+      { x: 10750, y: 405, w: 90, h: 24, type: 'lowBeam', isOverhead: true },
+      { x: 11300, y: 492, w: 54, h: 28, type: 'cone' },
+      { x: 12400, y: 492, w: 64, h: 28, type: 'puddle' },
+    ],
+    enemies: [],
+    rewards: [
+      { id: 1301, x: 1800, y: 475, w: 32, h: 32, type: 'star', collected: false },
+      { id: 1302, x: 5200, y: 335, w: 32, h: 32, type: 'shield', collected: false },
+      { id: 1303, x: 8500, y: 345, w: 32, h: 32, type: 'star', collected: false },
+      { id: 1304, x: 11800, y: 335, w: 32, h: 32, type: 'superHeart', collected: false },
+    ],
+    hearts: [
+      { id: 1301, x: 1020, y: 360, collected: false },
+      { id: 1302, x: 2220, y: 340, collected: false },
+      { id: 1303, x: 3720, y: 360, collected: false },
+      { id: 1304, x: 5240, y: 330, collected: false },
+      { id: 1305, x: 6920, y: 360, collected: false },
+      { id: 1306, x: 8520, y: 340, collected: false },
+      { id: 1307, x: 10220, y: 360, collected: false },
+      { id: 1308, x: 11840, y: 330, collected: false },
+    ],
+    coins: Array.from({ length: 220 }, (_, i) => ({
+      id: 2000 + i,
+      x: 260 + i * 58,
+      y: i % 7 === 3 ? 350 : i % 7 === 4 ? 320 : i % 7 === 5 ? 350 : 465,
+      collected: false,
+    })),
+    sceneryElements: [
+      { type: 'building', x: 200, y: 520 },
+      { type: 'lamppost', x: 500, y: 520 },
+      { type: 'building', x: 1100, y: 520 },
+      { type: 'lamppost', x: 1700, y: 520 },
+      { type: 'building', x: 2400, y: 520 },
+      { type: 'lamppost', x: 3100, y: 520 },
+      { type: 'building', x: 3900, y: 520 },
+      { type: 'lamppost', x: 4600, y: 520 },
+      { type: 'building', x: 5400, y: 520 },
+      { type: 'lamppost', x: 6100, y: 520 },
+      { type: 'building', x: 7000, y: 520 },
+      { type: 'lamppost', x: 7800, y: 520 },
+      { type: 'building', x: 8700, y: 520 },
+      { type: 'lamppost', x: 9500, y: 520 },
+      { type: 'building', x: 10400, y: 520 },
+      { type: 'lamppost', x: 11200, y: 520 },
+      { type: 'building', x: 12100, y: 520 },
+      { type: 'lamppost', x: 12900, y: 520 },
     ],
   },
 ];

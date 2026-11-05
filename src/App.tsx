@@ -60,6 +60,12 @@ export default function App() {
     setGameState('PLAYING');
   };
 
+  const handleStartBatcaveAdventure = () => {
+    setCurrentStageIndex(11);
+    setCurrentStageHearts(0);
+    setGameState('PLAYING');
+  };
+
   const handleRestart = () => {
     setCurrentStageIndex(0);
     setTotalHearts(0);
@@ -116,6 +122,7 @@ export default function App() {
             onRestart={handleRestart}
             onStartMission2={handleStartMission2}
             onStartHomeJourney={handleStartHomeJourney}
+            onStartBatcave={handleStartBatcaveAdventure}
             onExitGame={handleExitGame}
           />
         )}

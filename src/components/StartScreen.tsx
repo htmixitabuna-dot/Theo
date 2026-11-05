@@ -12,14 +12,16 @@ interface StartScreenProps {
 }
 
 export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
-  const [selectedMission, setSelectedMission] = useState<1 | 2>(1);
+  const [selectedMission, setSelectedMission] = useState<1 | 2 | 3 | 4>(1);
 
   // Allow desktop users to press Enter or Space to start immediately
   React.useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        onStart(selectedMission === 1 ? 0 : 5);
+        onStart(
+          selectedMission === 1 ? 0 : selectedMission === 2 ? 5 : selectedMission === 3 ? 11 : 12
+        );
       }
     };
     window.addEventListener('keydown', handleKey);
@@ -93,8 +95,32 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
                 : 'text-slate-300 hover:text-white hover:bg-white/5'
             }`}
           >
-            <span>🤍 Missão 2: Ursinho Carinho</span>
-            <span className="text-[10px] bg-cyan-950/80 px-1.5 py-0.2 rounded-full border border-cyan-400/30">Fases 6-10 🕸️</span>
+            <span>🤍 Missão 2: Carinho</span>
+            <span className="text-[10px] bg-cyan-950/80 px-1.5 py-0.2 rounded-full border border-cyan-400/30">6-10 🕸️</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setSelectedMission(3)}
+            className={`flex-1 py-1.5 px-2 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 ${
+              selectedMission === 3
+                ? 'bg-gradient-to-r from-slate-800 via-indigo-900 to-amber-600 text-amber-200 shadow-md border border-amber-400/60 scale-[1.02]'
+                : 'text-slate-300 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <span>🦇 Batima</span>
+            <span className="text-[10px] bg-slate-950/80 px-1.5 py-0.2 rounded-full border border-amber-400/30">12</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setSelectedMission(4)}
+            className={`flex-1 py-1.5 px-2 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 ${
+              selectedMission === 4
+                ? 'bg-gradient-to-r from-pink-600 via-rose-500 to-amber-500 text-white shadow-md border border-amber-300/70 scale-[1.02]'
+                : 'text-slate-300 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <span>🛹 Skate</span>
+            <span className="text-[10px] bg-rose-950/80 px-1.5 py-0.2 rounded-full border border-amber-300/30">13</span>
           </button>
         </div>
 
@@ -182,11 +208,19 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
         <div className="mt-3">
           <button
             type="button"
-            onClick={() => onStart(selectedMission === 1 ? 0 : 5)}
+            onClick={() =>
+              onStart(
+                selectedMission === 1 ? 0 : selectedMission === 2 ? 5 : selectedMission === 3 ? 11 : 12
+              )
+            }
             className={`w-full h-12 sm:h-13 rounded-2xl text-white font-extrabold text-base sm:text-lg tracking-wide uppercase shadow-2xl border-2 flex items-center justify-center gap-2.5 active:scale-95 transition-transform ${
               selectedMission === 1
                 ? 'bg-gradient-to-r from-rose-500 via-rose-600 to-pink-600 border-rose-300/80 shadow-rose-900/60'
-                : 'bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 border-cyan-300/80 shadow-cyan-900/60'
+                : selectedMission === 2
+                ? 'bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 border-cyan-300/80 shadow-cyan-900/60'
+                : selectedMission === 3
+                ? 'bg-gradient-to-r from-slate-800 via-indigo-900 to-amber-600 border-amber-400/80 shadow-amber-900/60'
+                : 'bg-gradient-to-r from-pink-600 via-rose-500 to-amber-500 border-amber-300/80 shadow-rose-900/60'
             }`}
           >
             <Play className="w-5 h-5 fill-white text-white drop-shadow" />
